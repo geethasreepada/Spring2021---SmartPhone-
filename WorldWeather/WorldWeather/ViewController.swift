@@ -46,10 +46,10 @@ class ViewController: UIViewController,CLLocationManagerDelegate,UITableViewDele
             
             let cell = Bundle.main.loadNibNamed("forecastTableViewCell", owner: self, options: nil)?.first as! forecastTableViewCell
                   //cell.backgroundColor = UIColor.clear
-        if (indexPath.row % 2 == 0) {
+             if (indexPath.row % 2 == 0) {
               cell.backgroundColor = UIColor(red: 245/255, green: 245/255, blue: 245/255, alpha: 1.0)
             }else{
-                cell.backgroundColor = UIColor.white // set your default color
+                cell.backgroundColor = UIColor.white 
             }
 
         
