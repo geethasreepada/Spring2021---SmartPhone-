@@ -9,18 +9,19 @@ import Foundation
 
 class Forecast{
     
-    var min:String = ""
     
-    var max:String = ""
+    var min:Int = 0
     
-    var Date:String = ""
+    var max:Int = 0
+    
+    var Day:String = ""
     
     
-    init(min:String,max:String,Date:String){
+    init(min:Int,max:Int,Day:String){
         
         self.min = min
         self.max = max
-        self.Date = Date
+        self.Day = Day
         
     }
     

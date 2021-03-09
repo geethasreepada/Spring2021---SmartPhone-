@@ -22,6 +22,7 @@ class ViewController: UIViewController,CLLocationManagerDelegate,UITableViewDele
     @IBOutlet weak var lblLat: UILabel!
     @IBOutlet weak var lblLng: UILabel!
     
+    
     var forecastArray:[Forecast] = [Forecast]()
     
     let locationManager = CLLocationManager()
@@ -33,31 +34,27 @@ class ViewController: UIViewController,CLLocationManagerDelegate,UITableViewDele
                 forecastTbl.dataSource = self
                 locationManager.delegate = self
                 locationManager.requestWhenInUseAuthorization()
+                locationManager.requestLocation()
+        self.forecastTbl.backgroundColor = UIColor.lightGray
+        
     }
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
             return forecastArray.count
         }
         
      func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-            //let cell = tableView.dequeueReusableCell(withIdentifier: "reuseIdentifier", for: indexPath)
+            
             let cell = Bundle.main.loadNibNamed("forecastTableViewCell", owner: self, options: nil)?.first as! forecastTableViewCell
+                  cell.backgroundColor = UIColor.clear
+        
+                   cell.lblMin.text = "\(forecastArray[indexPath.row].min)"
                     
-                    cell.lblMin.text = forecastArray[indexPath.row].min
-                    
-                    cell.lblMax.text = forecastArray[indexPath.row].max
-                    cell.lblDate.text = forecastArray[indexPath.row].Date
+                    cell.lblMax.text = "\(forecastArray[indexPath.row].max)"
+                    cell.lblDate.text = "\(forecastArray[indexPath.row].Day)"
                     return cell
                 }
     
-    override func viewWillAppear(_ animated: Bool) {
-        
-        updateFiveDayData("https://dataservice.accuweather.com/forecasts/v1/daily/5day/2628192?apikey=8uiWN1fBvl6V25XOSSiGH6x7hv5hLiyz")
-        
-           }
-    @IBAction func clickBtn(_ sender: Any) {
-        
-        locationManager.requestLocation()
-    }
+
     func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
         print(error.localizedDescription)
     }
@@ -93,7 +90,7 @@ class ViewController: UIViewController,CLLocationManagerDelegate,UITableViewDele
             self.lblCity.text = city
             let fiveDayForecastURL = self.getFiveDayForecastURL(Key)
             
-            self.updateFiveDayData(fiveDayForecastURL).done{ (Rain) in
+          self.updateFiveDayData(fiveDayForecastURL).done{ (Rain) in
                 
                 print(Rain)
                 
@@ -146,6 +143,8 @@ class ViewController: UIViewController,CLLocationManagerDelegate,UITableViewDele
                 
                 let Key = locationJSON["Key"].stringValue
                 let   city   = locationJSON["LocalizedName"].stringValue
+                self.lblCity.text = city
+                
                 seal.fulfill( (Key,city) )
             }
         }
@@ -153,10 +152,10 @@ class ViewController: UIViewController,CLLocationManagerDelegate,UITableViewDele
     
     
     
-    func updateFiveDayData(_ url:String)->Promise<(String,Int)>{
-        
-        return Promise<(String,Int)>{seal -> Void in
-            
+    func updateFiveDayData(_ url:String)->Promise<[Forecast]>{
+
+        return Promise<[Forecast]>{seal -> Void in
+
             AF.request(url).responseJSON{response in
 
                 if response.error != nil{
@@ -164,46 +163,72 @@ class ViewController: UIViewController,CLLocationManagerDelegate,UITableViewDele
                     seal.reject(response.error!)
 
                 }
-                
+
                 let locationJSON :JSON = JSON(response.data)
                 print(locationJSON)
-                
-                            
+
+
                 let minTemp :[JSON] = locationJSON["DailyForecasts[Temperature].Minimum"].arrayValue
-                
-                print(minTemp)
-                
-                
+
+
+
                 let json:JSON = JSON(response.data)
 
                 let dailyForecasts:[JSON] = json["DailyForecasts"].arrayValue
-
+                let   city   = locationJSON["LocalizedName"].stringValue
+                
 
                 self.forecastArray=[Forecast]()
-
+            
 
                 for dateVal in dailyForecasts{
 
+                    
+                    
+                    let date = dateVal["Date"].stringValue
+                   let dateFormatter = DateFormatter()
+                    
+                    dateFormatter.dateFormat = "yyyy-MM-dd'T'hh:mm:ssZ"
+                    let dte : Date? = dateFormatter.date(from: date)
 
-                    print(dateVal["Date"])
-                    print(dateVal["Temperature"])
+                    let weekDays: String? = dte?.dayOfWeek()!
 
-                    print(dateVal["Temperature"]["Minimum"]["Value"])
+                    print(weekDays!)
+                    print(dte!)
+            
+                    let min = dateVal["Temperature"]["Minimum"]["Value"].intValue
 
-                    print(dateVal["Temperature"]["Maximum"]["Value"])
+                    let max = dateVal["Temperature"]["Maximum"]["Value"].intValue
+                    
+                    let Day = weekDays!
+                    
+                    
+                    
+                    print(min)
+                    let forecast = Forecast(min: min,max: max,Day:Day)
+                    forecast.min = min
+                    forecast.max = max
+                    forecast.Day = Day
+                    self.forecastArray.append(forecast)
+                    self.forecastTbl.reloadData()
+                    
                 }
 
-                seal.fulfill( ("One",1) )
+                seal.fulfill( (self.forecastArray) )
             }
-                
-                
+
+
                 }
+    }
+        
+
+
+}
+extension Date {
+    func dayOfWeek() -> String? {
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "EEEE"
+        return dateFormatter.string(from: self).capitalized
         
     }
-    
-    
-    
-    
-                
-
 }
