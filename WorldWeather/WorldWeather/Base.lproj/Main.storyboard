@@ -38,11 +38,12 @@
                                 <nil key="highlightedColor"/>
                             </label>
                             <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="jVK-dH-k2E">
-                                <rect key="frame" x="20" y="284" width="374" height="592"/>
+                                <rect key="frame" x="20" y="284" width="374" height="602"/>
                                 <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                 <color key="tintColor" white="0.66666666666666663" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <constraints>
                                     <constraint firstAttribute="width" secondItem="jVK-dH-k2E" secondAttribute="height" multiplier="187:279" id="Jyz-mX-suS"/>
+                                    <constraint firstAttribute="width" secondItem="jVK-dH-k2E" secondAttribute="height" multiplier="187:296" id="dNs-3e-MHX"/>
                                     <constraint firstAttribute="width" secondItem="jVK-dH-k2E" secondAttribute="height" multiplier="374:557" id="xAt-Rz-Kph"/>
                                 </constraints>
                                 <color key="sectionIndexBackgroundColor" systemColor="systemTealColor"/>
@@ -59,7 +60,7 @@
                             </tableView>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
-                        <color key="backgroundColor" red="0.82585029375686914" green="0.95972762976708437" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                        <color key="backgroundColor" red="0.76020260195516931" green="0.9019238595072675" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <constraints>
                             <constraint firstAttribute="bottomMargin" secondItem="jVK-dH-k2E" secondAttribute="bottom" constant="20" id="0xH-py-SAy"/>
                             <constraint firstItem="jVK-dH-k2E" firstAttribute="trailing" secondItem="8bC-Xf-vdC" secondAttribute="trailingMargin" constant="20" id="5GZ-e0-hVm"/>
@@ -69,9 +70,12 @@
                             <constraint firstAttribute="trailing" secondItem="jVK-dH-k2E" secondAttribute="trailing" constant="20" id="QPk-ae-aoX"/>
                             <constraint firstItem="jVK-dH-k2E" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leadingMargin" constant="20" id="VAS-rq-TGU"/>
                             <constraint firstItem="jVK-dH-k2E" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leading" constant="20" id="YFj-Vc-4HC"/>
+                            <constraint firstItem="jVK-dH-k2E" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leading" constant="20" id="cEf-Ko-jZ3"/>
                             <constraint firstAttribute="trailing" secondItem="jVK-dH-k2E" secondAttribute="trailing" constant="20" id="egq-FY-MAz"/>
                             <constraint firstAttribute="bottom" secondItem="jVK-dH-k2E" secondAttribute="bottom" constant="20" id="fgZ-0g-QFa"/>
+                            <constraint firstAttribute="trailing" secondItem="jVK-dH-k2E" secondAttribute="trailing" constant="20" id="nSy-rb-nhe"/>
                             <constraint firstItem="jVK-dH-k2E" firstAttribute="trailing" secondItem="8bC-Xf-vdC" secondAttribute="trailingMargin" constant="20" id="uHm-W3-GfL"/>
+                            <constraint firstAttribute="bottom" secondItem="jVK-dH-k2E" secondAttribute="bottom" constant="10" id="wGz-uK-uzc"/>
                         </constraints>
                     </view>
                     <connections>
