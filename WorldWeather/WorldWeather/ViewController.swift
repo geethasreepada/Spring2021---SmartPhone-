@@ -18,12 +18,16 @@ class ViewController: UIViewController,CLLocationManagerDelegate,UITableViewDele
     @IBOutlet weak var forecastTbl: UITableView!
     @IBOutlet weak var lblCity: UILabel!
     
+    @IBOutlet weak var lblHigh: UILabel!
     
+    @IBOutlet weak var lblLow: UILabel!
     @IBOutlet weak var lblLat: UILabel!
     @IBOutlet weak var lblLng: UILabel!
     
+    @IBOutlet weak var lblWther: UILabel!
     
     var forecastArray:[Forecast] = [Forecast]()
+    
     
     let locationManager = CLLocationManager()
     
@@ -35,7 +39,8 @@ class ViewController: UIViewController,CLLocationManagerDelegate,UITableViewDele
                 locationManager.delegate = self
                 locationManager.requestWhenInUseAuthorization()
                 locationManager.requestLocation()
-        self.forecastTbl.backgroundColor = UIColor.clear
+                //self.forecastTbl.backgroundColor = UIColor.clear
+        
         
     }
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -49,7 +54,7 @@ class ViewController: UIViewController,CLLocationManagerDelegate,UITableViewDele
              if (indexPath.row % 2 == 0) {
               cell.backgroundColor = UIColor(red: 245/255, green: 245/255, blue: 245/255, alpha: 1.0)
             }else{
-                cell.backgroundColor = UIColor.white 
+                cell.backgroundColor = UIColor.white
             }
 
         
@@ -95,15 +100,14 @@ class ViewController: UIViewController,CLLocationManagerDelegate,UITableViewDele
             
             self.lblCity.text = city
             let fiveDayForecastURL = self.getFiveDayForecastURL(Key)
-            
-          self.updateFiveDayData(fiveDayForecastURL).done{ (Rain) in
-                
+            self.updateFiveDayData(fiveDayForecastURL).done{ (Rain) in
+
                 print(Rain)
-                
-                
+
+
             }
             .catch { error in
-                
+
                 print("getting the 5 day Data:/(error.localizedDescription)")
             }
             print(fiveDayForecastURL)
@@ -149,8 +153,10 @@ class ViewController: UIViewController,CLLocationManagerDelegate,UITableViewDele
                 
                 let Key = locationJSON["Key"].stringValue
                 let   city   = locationJSON["LocalizedName"].stringValue
+                
                 self.lblCity.text = city
                 
+
                 seal.fulfill( (Key,city) )
             }
         }
@@ -158,11 +164,12 @@ class ViewController: UIViewController,CLLocationManagerDelegate,UITableViewDele
     
     
     
+    
     func updateFiveDayData(_ url:String)->Promise<[Forecast]>{
 
         return Promise<[Forecast]>{seal -> Void in
 
-            AF.request(url).responseJSON{response in
+            AF.request(url).responseJSON{ [self]response in
 
                 if response.error != nil{
 
@@ -170,24 +177,23 @@ class ViewController: UIViewController,CLLocationManagerDelegate,UITableViewDele
 
                 }
 
-                let locationJSON :JSON = JSON(response.data)
-                print(locationJSON)
-
-
-                let minTemp :[JSON] = locationJSON["DailyForecasts[Temperature].Minimum"].arrayValue
-
-
 
                 let json:JSON = JSON(response.data)
+                
+                print(json)
 
                 let dailyForecasts:[JSON] = json["DailyForecasts"].arrayValue
-                let   city   = locationJSON["LocalizedName"].stringValue
+                 
                 
-
+                let weather = json["Headline"]
+               
+                let weatherText = weather["Category"].stringValue
+                
+               
+                    
                 self.forecastArray=[Forecast]()
             
-
-                for dateVal in dailyForecasts{
+                  for dateVal in dailyForecasts{
 
                     
                     
@@ -203,6 +209,7 @@ class ViewController: UIViewController,CLLocationManagerDelegate,UITableViewDele
                     print(dte!)
             
                     let min = dateVal["Temperature"]["Minimum"]["Value"].intValue
+                
 
                     let max = dateVal["Temperature"]["Maximum"]["Value"].intValue
                     
@@ -216,10 +223,21 @@ class ViewController: UIViewController,CLLocationManagerDelegate,UITableViewDele
                     forecast.max = max
                     forecast.Day = Day
                     self.forecastArray.append(forecast)
+                    
+                    
                     self.forecastTbl.reloadData()
                     
                 }
-
+                lblHigh.text = "H:\(self.forecastArray[0].max)"
+                lblLow.text = "L:\(self.forecastArray[0].min)"
+                
+                lblWther.text = weatherText
+                
+                print(weatherText)
+                
+                print("hello")
+                
+                
                 seal.fulfill( (self.forecastArray) )
             }
 
