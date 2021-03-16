@@ -24,8 +24,14 @@ class ViewController: UIViewController,CLLocationManagerDelegate,UITableViewDele
     @IBOutlet weak var lblLat: UILabel!
     @IBOutlet weak var lblLng: UILabel!
     
+    @IBOutlet weak var lblCurrentTemp: UILabel!
     @IBOutlet weak var lblWther: UILabel!
     
+    
+    @IBOutlet weak var maxIconImg: UIImageView!
+    
+    @IBOutlet weak var WeatherIconImg: UIImageView!
+    @IBOutlet weak var minIconImg: UIImageView!
     var forecastArray:[Forecast] = [Forecast]()
     
     
@@ -58,11 +64,15 @@ class ViewController: UIViewController,CLLocationManagerDelegate,UITableViewDele
             }
 
         
-                   cell.lblMin.text = "\(forecastArray[indexPath.row].min)"
+                   cell.lblMin.text = "\(forecastArray[indexPath.row].min)°"
                     
-                    cell.lblMax.text = "\(forecastArray[indexPath.row].max)"
+                    cell.lblMax.text = "\(forecastArray[indexPath.row].max)°"
                     cell.lblDate.text = "\(forecastArray[indexPath.row].Day)"
+                    cell.ImgMin.image = UIImage(named:"\(forecastArray[indexPath.row].minIcon)-s")
+                    cell.ImgMax.image = UIImage(named:"\(forecastArray[indexPath.row].maxIcon)-s")
+        
                     return cell
+        
                 }
     
 
@@ -77,9 +87,9 @@ class ViewController: UIViewController,CLLocationManagerDelegate,UITableViewDele
             let lat=currLocation.coordinate.latitude
             
             
-            print("lat:\(lat)")
-            print("lng:\(lng)")
-            
+//            print("lat:\(lat)")
+//            print("lng:\(lng)")
+//
             lblLat.text = "lat:\(lat)"
             lblLng.text = "lng:\(lng)"
             
@@ -96,13 +106,14 @@ class ViewController: UIViewController,CLLocationManagerDelegate,UITableViewDele
         getLocationData(url).done{
             (Key,city) in
             print(Key)
+            print("hello")
             print(city)
             
             self.lblCity.text = city
             let fiveDayForecastURL = self.getFiveDayForecastURL(Key)
             self.updateFiveDayData(fiveDayForecastURL).done{ (Rain) in
 
-                print(Rain)
+//                print(Rain)
 
 
             }
@@ -110,7 +121,7 @@ class ViewController: UIViewController,CLLocationManagerDelegate,UITableViewDele
 
                 print("getting the 5 day Data:/(error.localizedDescription)")
             }
-            print(fiveDayForecastURL)
+//            print(fiveDayForecastURL)
         }
         
         .catch { error in
@@ -137,6 +148,15 @@ class ViewController: UIViewController,CLLocationManagerDelegate,UITableViewDele
         return url
         
     }
+    
+    func getcurrentConditionURL(_ cityKey:String)->String{
+        
+        var url = currentConditionURL
+        url.append("\(cityKey)")
+        url.append("?apikey=\(apiKey)")
+        return url
+        
+        }
     func getLocationData(_ url:String)->Promise<(String,String)>{
         
         return Promise<(String,String)>{seal -> Void in
@@ -154,9 +174,13 @@ class ViewController: UIViewController,CLLocationManagerDelegate,UITableViewDele
                 let Key = locationJSON["Key"].stringValue
                 let   city   = locationJSON["LocalizedName"].stringValue
                 
+                let oneDayURL = self.getcurrentConditionURL(Key)
+                self.getCurrentConditionData(oneDayURL)
+                
+                print(oneDayURL)
+                
                 self.lblCity.text = city
                 
-
                 seal.fulfill( (Key,city) )
             }
         }
@@ -180,17 +204,10 @@ class ViewController: UIViewController,CLLocationManagerDelegate,UITableViewDele
 
                 let json:JSON = JSON(response.data)
                 
-                print(json)
+               // print(json)
 
                 let dailyForecasts:[JSON] = json["DailyForecasts"].arrayValue
                  
-                
-                let weather = json["Headline"]
-               
-                let weatherText = weather["Category"].stringValue
-                
-               
-                    
                 self.forecastArray=[Forecast]()
             
                   for dateVal in dailyForecasts{
@@ -205,9 +222,11 @@ class ViewController: UIViewController,CLLocationManagerDelegate,UITableViewDele
 
                     let weekDays: String? = dte?.dayOfWeek()!
 
-                    print(weekDays!)
-                    print(dte!)
-            
+                  print(weekDays!)
+                 print(dte!)
+                    let maxIcon = dateVal["Day"]["Icon"].intValue
+                    let minIcon = dateVal["Night"]["Icon"].intValue
+                      //  self.ImgMax.image = UIImage(named: "\(maxIcon)-s")
                     let min = dateVal["Temperature"]["Minimum"]["Value"].intValue
                 
 
@@ -215,27 +234,32 @@ class ViewController: UIViewController,CLLocationManagerDelegate,UITableViewDele
                     
                     let Day = weekDays!
                     
+                    let minImg : UIImage?  = UIImage(named: ("\(minIcon)-s"))
+                    let maxImg : UIImage? = UIImage(named: ("\(maxIcon)-s"))
                     
                     
-                    print(min)
-                    let forecast = Forecast(min: min,max: max,Day:Day)
+                    let forecast = Forecast(min: min,max: max,Day:Day,minIcon: minIcon,maxIcon: maxIcon,minIconImg: minImg ?? globalImage!,maxIconImg: maxImg ?? globalImage!)
                     forecast.min = min
                     forecast.max = max
                     forecast.Day = Day
+                    forecast.minIcon = minIcon
+                    forecast.maxIcon = maxIcon
+                    forecast.minIconImg = minImg ?? globalImage!
+                    forecast.maxIconImg = maxImg ?? globalImage!
+            
                     self.forecastArray.append(forecast)
                     
                     
                     self.forecastTbl.reloadData()
                     
                 }
-                lblHigh.text = "H:\(self.forecastArray[0].max)"
-                lblLow.text = "L:\(self.forecastArray[0].min)"
+                lblHigh.text = "H:\(self.forecastArray[0].max)°"
+                lblLow.text = "L:\(self.forecastArray[0].min)°"
+                self.maxIconImg.image = UIImage(named:"\(self.forecastArray[0].maxIcon)-s") 
+                self.minIconImg.image = UIImage(named:"\(self.forecastArray[0].minIcon)-s")
+                //print(weatherText)
                 
-                lblWther.text = weatherText
-                
-                print(weatherText)
-                
-                print("hello")
+               // print("hello")
                 
                 
                 seal.fulfill( (self.forecastArray) )
@@ -244,9 +268,52 @@ class ViewController: UIViewController,CLLocationManagerDelegate,UITableViewDele
 
                 }
     }
+    
+    func getCurrentConditionData(_ url:String)->Promise<(Int)>{
         
+        return Promise<(Int)>{seal -> Void in
+            
+            AF.request(url).responseJSON{response in
+                
+                if response.error != nil{
+                    
+                    seal.reject(response.error!)
+                    
+                }
+                
+                let currentJSON :JSON = JSON(response.data)
+                
+                
+                
+                let temp : [JSON] = currentJSON[].arrayValue
+                
+                
+                    
+                for temps in temp{
+                    
+                    let currentTemp = temps["Temperature"]["Imperial"]["Value"].intValue
+                    
+                    let weatherText = temps["WeatherText"]
+                    self.lblWther.text = "\(weatherText)"
+                    print(currentTemp )
+                    
+                    self.lblCurrentTemp.text = "\(currentTemp)°"
+                    
+                    let weatherIcon = temps["WeatherIcon"].intValue
+                    
+                    print("\(weatherIcon) check")
+                    
+                    self.WeatherIconImg.image = UIImage(named:"\(weatherIcon)-s")
+                    
+                    
+                }
+                
+               
 
-
+                seal.fulfill( (1) )
+            }
+        }
+    }
 }
 extension Date {
     func dayOfWeek() -> String? {

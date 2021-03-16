@@ -13,6 +13,11 @@ class forecastTableViewCell: UITableViewCell {
     @IBOutlet weak var lblMin: UILabel!
     @IBOutlet weak var lblMax: UILabel!
     
+    
+    @IBOutlet weak var ImgMax: UIImageView!
+    
+    @IBOutlet weak var ImgMin: UIImageView!
+    
     override func awakeFromNib() {
         super.awakeFromNib()
         // Initialization code
