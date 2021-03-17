@@ -297,7 +297,7 @@ class ViewController: UIViewController,CLLocationManagerDelegate,UITableViewDele
                     self.lblWther.text = "\(weatherText)"
                     print(currentTemp )
                     
-                    self.lblCurrentTemp.text = "\(currentTemp)°"
+                    self.lblCurrentTemp.text = "\(currentTemp)°F"
                     
                     let weatherIcon = temps["WeatherIcon"].intValue
                     
