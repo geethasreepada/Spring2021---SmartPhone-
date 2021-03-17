@@ -64,9 +64,9 @@ class ViewController: UIViewController,CLLocationManagerDelegate,UITableViewDele
             }
 
         
-                   cell.lblMin.text = "\(forecastArray[indexPath.row].min)°"
+                   cell.lblMin.text = "\(forecastArray[indexPath.row].min)°F"
                     
-                    cell.lblMax.text = "\(forecastArray[indexPath.row].max)°"
+                    cell.lblMax.text = "\(forecastArray[indexPath.row].max)°F"
                     cell.lblDate.text = "\(forecastArray[indexPath.row].Day)"
                     cell.ImgMin.image = UIImage(named:"\(forecastArray[indexPath.row].minIcon)-s")
                     cell.ImgMax.image = UIImage(named:"\(forecastArray[indexPath.row].maxIcon)-s")
@@ -253,8 +253,8 @@ class ViewController: UIViewController,CLLocationManagerDelegate,UITableViewDele
                     self.forecastTbl.reloadData()
                     
                 }
-                lblHigh.text = "H:\(self.forecastArray[0].max)°"
-                lblLow.text = "L:\(self.forecastArray[0].min)°"
+                lblHigh.text = "H:\(self.forecastArray[0].max)°F"
+                lblLow.text = "L:\(self.forecastArray[0].min)°F"
                 self.maxIconImg.image = UIImage(named:"\(self.forecastArray[0].maxIcon)-s") 
                 self.minIconImg.image = UIImage(named:"\(self.forecastArray[0].minIcon)-s")
                 //print(weatherText)
