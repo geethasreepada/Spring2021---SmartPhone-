@@ -23,7 +23,7 @@ class NewsHeadlinesTableViewController: UITableViewController {
 
     }
     
-    
+     
     override func viewWillAppear(_ animated: Bool) {
         getData()
     }
