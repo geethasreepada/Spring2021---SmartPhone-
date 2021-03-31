@@ -37,8 +37,8 @@ class ViewController: UIViewController,UITableViewDelegate,UITableViewDataSource
            cell.backgroundColor = UIColor.white
        }
         cell.lblState.text = "\(covidArray[indexPath.row].state)"
-        cell.lbltotal.text = "\(covidArray[indexPath.row].total)"
-        cell.lblPositive.text = "\(covidArray[indexPath.row].positive)"
+        cell.lbltotal.text = "T:\(covidArray[indexPath.row].total)"
+        cell.lblPositive.text = "P:\(covidArray[indexPath.row].positive)"
 
         
         return cell
