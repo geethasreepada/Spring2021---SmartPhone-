@@ -1,0 +1,6 @@
+framework module Pods_Yammer {
+  umbrella header "Pods-Yammer-umbrella.h"
+
+  export *
+  module * { export * }
+}
